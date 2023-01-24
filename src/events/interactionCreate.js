@@ -93,6 +93,17 @@ class InteractionCreate {
               content: 'Something went wrong.',
             });
           });
+      } else if (interaction.customId === 'upgrade-ticket') {
+        let ticket = interaction.channel;
+        let user = interaction.user;
+
+        if (!interaction.member.roles.cache.has(this.client.config.roles.required.support_team))
+          return interaction.reply({
+            ephemeral: true,
+            content: `Only <@&${this.client.config.roles.required.support_team}> can upgrade tickets.`,
+          });
+
+        this.TicketManager.upgradeTicket(ticket, interaction, user);
       } else if (interaction.customId === 'close-ticket') {
         let ticket = interaction.channel;
         let user = interaction.user;

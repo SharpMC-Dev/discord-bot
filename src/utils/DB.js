@@ -9,8 +9,8 @@ class DB {
     this.connection_uri = require('../config').bot.db_uri;
   }
 
-  async findTicket(id, user) {
-    if (user) {
+  async findTicket(id, findUser) {
+    if (findUser) {
       return this.tickets.findOne({ userId: id });
     } else {
       return this.tickets.findOne({ id });

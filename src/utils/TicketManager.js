@@ -16,8 +16,11 @@ class TicketManager {
     return row;
   }
 
-  async buildCloseTicketRow() {
-    const row = new MessageActionRow().addComponents(new MessageButton().setCustomId(`close-ticket`).setEmoji(this.client.config.settings.tickets.close_ticket_emoji).setStyle('SECONDARY'));
+  async buildTicketOptionsRow() {
+    const row = new MessageActionRow().addComponents([
+      new MessageButton().setCustomId(`upgrade-ticket`).setEmoji(this.client.config.settings.tickets.upgrade_ticket_emoji).setStyle('SECONDARY').setLabel('Escalate Ticket'),
+      new MessageButton().setCustomId(`close-ticket`).setEmoji(this.client.config.settings.tickets.close_ticket_emoji).setStyle('SECONDARY').setLabel('Close Ticket'),
+    ]);
 
     return row;
   }
@@ -65,6 +68,86 @@ class TicketManager {
     return await this.client.DB.findTicket(ticket.id, false);
   }
 
+  async addUserToTicket(user, ticket, interaction) {
+    let userPerms = ticket.permissionsFor(user).toArray();
+    if (userPerms.includes('VIEW_CHANNEL')) return interaction.reply({ ephemeral: true, content: `${user} is already a member of this ticket.` });
+    ticket.permissionOverwrites
+      .create(
+        user,
+        {
+          'VIEW_CHANNEL': true,
+          'SEND_MESSAGES': true,
+          'READ_MESSAGE_HISTORY': true,
+          'ATTACH_FILES': true,
+          'EMBED_LINKS': true,
+          'USE_EXTERNAL_EMOJIS': true,
+        },
+        1
+      )
+      .then(c => {
+        interaction.reply({ embeds: [new Embed().setDescription(`Successfully added ${user} to the ticket!`).build()], ephemeral: true });
+      });
+  }
+
+  async removeUserFromTicket(user, ticket, interaction) {
+    let userPerms = ticket.permissionsFor(user).toArray();
+
+    if (!userPerms.includes('VIEW_CHANNEL')) return interaction.reply({ ephemeral: true, content: `${user} is not a member of this ticket.` });
+
+    ticket.permissionOverwrites
+      .create(
+        user,
+        {
+          'VIEW_CHANNEL': false,
+          'SEND_MESSAGES': false,
+          'READ_MESSAGE_HISTORY': false,
+          'ATTACH_FILES': false,
+          'EMBED_LINKS': false,
+          'USE_EXTERNAL_EMOJIS': false,
+        },
+        1
+      )
+      .then(c => {
+        interaction.reply({ embeds: [new Embed().setDescription(`Successfully removed ${user} from the ticket!`).build()], ephemeral: true });
+      });
+  }
+
+  async upgradeTicket(ticket, interaction, user) {
+    let adminRoleId = this.client.config.roles.required.ticket_admin_role;
+    let staffRoleId = this.client.config.roles.required.support_team;
+
+    ticket.permissionOverwrites.create(
+      adminRoleId,
+      {
+        'VIEW_CHANNEL': true,
+        'SEND_MESSAGES': true,
+        'READ_MESSAGE_HISTORY': true,
+        'ATTACH_FILES': true,
+        'EMBED_LINKS': true,
+        'USE_EXTERNAL_EMOJIS': true,
+      },
+      0
+    );
+
+    ticket.permissionOverwrites.create(
+      staffRoleId,
+      {
+        'VIEW_CHANNEL': false,
+        'SEND_MESSAGES': false,
+        'READ_MESSAGE_HISTORY': false,
+        'ATTACH_FILES': false,
+        'EMBED_LINKS': false,
+        'USE_EXTERNAL_EMOJIS': false,
+      },
+      0
+    );
+
+    ticket.setName(`admin-${ticket.name}`);
+
+    interaction.reply({ embeds: [new Embed().setDescription(`Successfully upgraded the ticket!`).build()], ephemeral: true });
+    interaction.channel.send({ embeds: [new Embed().setDescription(`${user} upgraded the ticket.`).build()], ephemeral: true });
+  }
+
   async createTicket(guild, user) {
     return await guild.channels.create(`ticket-${user.tag}`, {
       parent: this.category,
@@ -106,25 +189,30 @@ class TicketManager {
 
     i.deferUpdate();
     i.channel.send({
-      // content: `**Like how we did? Want to help us improve? Submit feedback here: https://chathubfeedback.com/?id=${dbTicket.userId}**`,
       embeds: [closedEmbed],
       components: [await this.buildDeleteArchiveRow()],
     });
 
     dbTicket.remove();
     ticket.setName(`archived-${ticket.name}`);
+    let msgs = await ticket.messages.fetch();
+    msgs.first().edit({ components: [] });
     return ticket.setParent(this.archiveCategory, { lockPermissions: true });
   }
 
   async sendWelcomeMessage(user, ticket) {
-    let embed = new Embed()
-      .setDescription(`Hello, ${user}! Please be patient and a member of <@&${this.staffRole}> will be with you soon.\n\nPress the ${this.client.config.settings.tickets.close_ticket_emoji} button below any time to close this ticket.`)
-      .build();
+    let embed = new Embed().setDescription(`Hello, ${user}! Please be patient and a member of <@&${this.staffRole}> will be with you soon.`).build();
 
-    await ticket.send({
+    let tMsg = await ticket.send({
       content: `${user}`,
       embeds: [embed],
-      components: [await this.buildCloseTicketRow()],
+      components: [await this.buildTicketOptionsRow()],
+    });
+
+    tMsg.pin().then(m => {
+      let lastSysMsg = m.channel.lastMessage;
+
+      if (lastSysMsg.system) lastSysMsg.delete();
     });
   }
 

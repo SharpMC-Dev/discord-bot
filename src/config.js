@@ -117,8 +117,9 @@ module.exports = {
       ticket_embed_channel: '1064696443790692417', // Where the main Ticket embed will send
       ticket_category: '1064696443790692416', // Where all new Tickets will go
       ticket_archive_category: '1064703158787506237', // Where all closed Tickets will go
-      open_ticket_emoji: '🎫', // The emoji that appears in the button to open a new ticket
-      close_ticket_emoji: '❎', // The emoji that appears in the button to close an existing ticket
+      open_ticket_emoji: '🎟️', // The emoji that appears in the button to open a new ticket
+      close_ticket_emoji: '❌', // The emoji that appears in the button to close an existing ticket
+      upgrade_ticket_emoji: '⬆️',
     },
 
     // Reaction roles
@@ -219,7 +220,7 @@ module.exports = {
       support_team: '1064696443102826543', // This role will have access to all tickets
       chatter_role: '1064700994375651401',
       chat_revival_role: '1064696443119620138',
-      selfie_verified: '1064696443119620138',
+      ticket_admin_role: '1064696443102826545',
     },
     optional: {},
   },
