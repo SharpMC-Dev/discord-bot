@@ -25,6 +25,12 @@ class TicketManager {
     return row;
   }
 
+  async buildTicketOptionsRowWithoutUpgrade() {
+    const row = new MessageActionRow().addComponents([new MessageButton().setCustomId(`close-ticket`).setEmoji(this.client.config.settings.tickets.close_ticket_emoji).setStyle('SECONDARY').setLabel('Close Ticket')]);
+
+    return row;
+  }
+
   async buildDeleteArchiveRow() {
     const row = new MessageActionRow().addComponents(new MessageButton().setCustomId(`delete-ticket`).setEmoji('🗑️').setStyle('DANGER'));
 
@@ -85,6 +91,8 @@ class TicketManager {
         1
       )
       .then(c => {
+        interaction.channel.send({ embeds: [new Embed().setDescription(`${interaction.user} added ${user} to the ticket.`).build()], ephemeral: true });
+
         interaction.reply({ embeds: [new Embed().setDescription(`Successfully added ${user} to the ticket!`).build()], ephemeral: true });
       });
   }
@@ -108,6 +116,8 @@ class TicketManager {
         1
       )
       .then(c => {
+        interaction.channel.send({ embeds: [new Embed().setDescription(`${interaction.user} removed ${user} from the ticket.`).build()], ephemeral: true });
+
         interaction.reply({ embeds: [new Embed().setDescription(`Successfully removed ${user} from the ticket!`).build()], ephemeral: true });
       });
   }
@@ -142,7 +152,8 @@ class TicketManager {
       0
     );
 
-    ticket.setName(`admin-${ticket.name}`);
+    let msgs = await ticket.messages.fetch();
+    msgs.first().edit({ components: this.buildTicketOptionsRowWithoutUpgrade() });
 
     interaction.reply({ embeds: [new Embed().setDescription(`Successfully upgraded the ticket!`).build()], ephemeral: true });
     interaction.channel.send({ embeds: [new Embed().setDescription(`${user} upgraded the ticket.`).build()], ephemeral: true });

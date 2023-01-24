@@ -7,7 +7,7 @@ module.exports = {
     token: process.env.TOKEN, // Edit ".env" to change this value
     tatsu_token: process.env.TATSU_TOKEN,
     db_uri: process.env.MONGO_URI, // Edit ".env" to change this value
-    guildId: '1064696443102826536', // The ID of the server the bot works in
+    guildId: '1060595497619959898', // The ID of the server the bot works in
     brand: {
       name: 'SharpMC', // This will appear at the bottom of all embeds by default
       logo: 'https://media.discordapp.net/attachments/1062842711750742126/1064697937415901315/sharpmc.png', // This will appear at the bottom of all embeds by default
@@ -18,7 +18,7 @@ module.exports = {
   //  Value should be: #XXXXXX
   colors: {
     embeds: {
-      default: '#49B5D8', // The default embed color
+      default: '#79d3f0', // The default embed color
       boost: '#8C6AD8', // The color of the boost message embed
       success: '#32a852',
       failure: '#ed3532',
@@ -98,25 +98,13 @@ module.exports = {
       xp_min_per_message: 50, // The amount of XP a user will earn per message
       xp_max_per_message: 150, // The max amount of xp a user can gain on one message
       required_xp: 1000, // XP = level * 4(required_xp) EXAMPLE: Required XP for level 6 = 6000xp (at 1000) [4(1000 [rate]) = 4000 * 6 [level] = 24k required xp]
-      roles: {
-        '5': '953733957848006716', // 'Level': 'role id'
-        '10': '953733989775056936', // 'Level': 'role id'
-        '20': '953734050194022420', // 'Level': 'role id'
-        '30': '953734056162500700', // 'Level': 'role id'
-        '40': '953734116019437618', // 'Level': 'role id'
-        '50': '953734144054161519', // 'Level': 'role id'
-        '60': '953734169257717831', // 'Level': 'role id'
-        '70': '953734192464810085', // 'Level': 'role id'
-        '80': '953734214803656704', // 'Level': 'role id'
-        '90': '953734243257827378', // 'Level': 'role id'
-        '100': '953734250560110793', // 'Level': 'role id'
-      },
+      roles: {},
     },
     // Tickets
     tickets: {
-      ticket_embed_channel: '1064696443790692417', // Where the main Ticket embed will send
-      ticket_category: '1064696443790692416', // Where all new Tickets will go
-      ticket_archive_category: '1064703158787506237', // Where all closed Tickets will go
+      ticket_embed_channel: '1067297918832365649', // Where the main Ticket embed will send
+      ticket_category: '1067297850909790219', // Where all new Tickets will go
+      ticket_archive_category: '1067300235308707850', // Where all closed Tickets will go
       open_ticket_emoji: '🎟️', // The emoji that appears in the button to open a new ticket
       close_ticket_emoji: '❌', // The emoji that appears in the button to close an existing ticket
       upgrade_ticket_emoji: '⬆️',
@@ -127,10 +115,17 @@ module.exports = {
       // emoji : role
       role_embeds: [
         {
-          embed_title: 'Updates',
-          embed_color: '#49B5D8',
+          embed_title: 'Server Updates & Sneak Peeks',
+          embed_color: '#79d3f0',
           roles: {
-            '1064700189027340380': '1064696443102826537',
+            '1062092519871107234': '1067292904625815562',
+          },
+        },
+        {
+          embed_title: 'Community Polls',
+          embed_color: '#79d3f0',
+          roles: {
+            '📊': '1067304400059646002',
           },
         },
       ],
@@ -202,10 +197,8 @@ module.exports = {
       join_message_channel: '', // The channel where welcome messages will be sent
       leave_message_channel: '', // The channel the bot will use when a member leaves the server
       boost_perks_channel: '', // The channel that contains the list of booster perks
-      mod_logs_channel: '1064696444075921455', // Where the bot will send all moderation/audit logs
-      reaction_role_channel: '1064696443593572391', // Where users will go to get reaction roles
-      // user_verify_channel: '991176436222275594',
-      // staff_selfie_verification: '1008087091621679156',
+      mod_logs_channel: '1067306332555853875', // Where the bot will send all moderation/audit logs
+      reaction_role_channel: '1067297666591096884', // Where users will go to get reaction roles
     },
     optional: {
       // feedback_channel: '',
@@ -216,11 +209,11 @@ module.exports = {
   //   Duplicate roles are OK
   roles: {
     required: {
-      booster_role: '1064696443102826539', // The automatically assigned role for those who boost the server. This role is assigned by Discord and cannot be removed.
-      support_team: '1064696443102826543', // This role will have access to all tickets
-      chatter_role: '1064700994375651401',
-      chat_revival_role: '1064696443119620138',
-      ticket_admin_role: '1064696443102826545',
+      booster_role: '1067294056520101969', // The automatically assigned role for those who boost the server. This role is assigned by Discord and cannot be removed.
+      support_team: '1067294489917542451', // This role will have access to all tickets
+      chatter_role: '1067293123383918623',
+      chat_revival_role: '1067294489917542451',
+      ticket_admin_role: '1060646045987639386',
     },
     optional: {},
   },
