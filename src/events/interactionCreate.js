@@ -1,6 +1,8 @@
 const { MessageActionRow, MessageButton, Modal, TextInputComponent } = require('discord.js');
 const Embed = require('../utils/Embed');
 const parseMsg = require('../utils/parseMsg');
+const axios = require('axios').default;
+const hastebinBaseUrl = 'https://hastebin.com';
 
 class InteractionCreate {
   constructor(client) {
@@ -220,6 +222,29 @@ class InteractionCreate {
       //     });
       //   });
       // }
+    } else if (interaction.isMessageContextMenu()) {
+      let messageData = JSON.stringify(interaction.targetMessage, null, 2);
+
+      axios
+        .post(`${hastebinBaseUrl}/documents`, messageData, {
+          headers: {
+            'Authorization': `Bearer ${this.client.config.bot.hastebin_key}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(res => {
+          interaction.reply({
+            ephemeral: true,
+            embeds: [new Embed().setDescription(`[Click to view message data](https://hastebin.com/share/${res.data.key}.json "Message ID ${interaction.targetMessage.id}")`).setAuthor('Successfully pulled message data').build()],
+          });
+          // console.log(res.data);
+        })
+        .catch(err => {
+          // console.log(err);
+          interaction.reply({ ephemeral: true, content: 'Upload failed. Try again :)' });
+        });
+
+      console.log(messageData);
     }
   }
 }

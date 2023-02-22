@@ -5,6 +5,11 @@ module.exports = async client => {
   let appCommands = client.application.commands;
   let commands = await appCommands.fetch();
 
+  // appCommands.create({
+  //   name: 'Get Data',
+  //   type: 'MESSAGE',
+  // });
+
   let builder = {};
 
   clientCommands.each(cmd => {

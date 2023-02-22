@@ -7,6 +7,7 @@ module.exports = {
     token: process.env.TOKEN, // Edit ".env" to change this value
     tatsu_token: process.env.TATSU_TOKEN,
     db_uri: process.env.MONGO_URI, // Edit ".env" to change this value
+    hastebin_key: process.env.HASTEBIN_KEY,
     guildId: '1060595497619959898', // The ID of the server the bot works in
     brand: {
       name: 'SharpMC', // This will appear at the bottom of all embeds by default

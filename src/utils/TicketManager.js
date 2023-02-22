@@ -26,7 +26,7 @@ class TicketManager {
   }
 
   async buildTicketOptionsRowWithoutUpgrade() {
-    const row = new MessageActionRow().addComponents([new MessageButton().setCustomId(`close-ticket`).setEmoji(this.client.config.settings.tickets.close_ticket_emoji).setStyle('SECONDARY').setLabel('Close Ticket')]);
+    const row = new MessageActionRow().addComponents(new MessageButton().setCustomId(`close-ticket`).setEmoji(this.client.config.settings.tickets.close_ticket_emoji).setStyle('SECONDARY').setLabel('Close Ticket'));
 
     return row;
   }
@@ -152,8 +152,8 @@ class TicketManager {
       0
     );
 
-    let msgs = await ticket.messages.fetch();
-    msgs.first().edit({ components: this.buildTicketOptionsRowWithoutUpgrade() });
+    let msgs = (await ticket.messages.fetch({ cache: true })).filter(m => m.author.bot);
+    msgs.first().edit({ components: [await this.buildTicketOptionsRowWithoutUpgrade()] });
 
     interaction.reply({ embeds: [new Embed().setDescription(`Successfully upgraded the ticket!`).build()], ephemeral: true });
     interaction.channel.send({ embeds: [new Embed().setDescription(`${user} upgraded the ticket.`).build()], ephemeral: true });
@@ -206,7 +206,7 @@ class TicketManager {
 
     dbTicket.remove();
     ticket.setName(`archived-${ticket.name}`);
-    let msgs = await ticket.messages.fetch();
+    let msgs = (await ticket.messages.fetch({ cache: true })).filter(m => m.author.bot);
     msgs.first().edit({ components: [] });
     return ticket.setParent(this.archiveCategory, { lockPermissions: true });
   }
